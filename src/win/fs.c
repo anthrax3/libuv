@@ -890,11 +890,7 @@ void fs__scandir(uv_fs_t* req) {
    * A file name is at most 256 WCHARs long.
    * According to MSDN, the buffer must be aligned at an 8-byte boundary.
    */
-#if _MSC_VER
-  __declspec(align(8)) char buffer[8192];
-#else
-  __attribute__ ((aligned (8))) char buffer[8192];
-#endif
+  uint64_t buffer[1024];
 
   STATIC_ASSERT(sizeof buffer >=
                 sizeof(FILE_DIRECTORY_INFORMATION) + 256 * sizeof(WCHAR));
@@ -917,7 +913,7 @@ void fs__scandir(uv_fs_t* req) {
                                  NULL,
                                  NULL,
                                  &iosb,
-                                 &buffer,
+                                 (char *)&buffer,
                                  sizeof buffer,
                                  FileDirectoryInformation,
                                  FALSE,
@@ -931,7 +927,7 @@ void fs__scandir(uv_fs_t* req) {
     goto not_a_directory_error;
 
   while (NT_SUCCESS(status)) {
-    char* position = buffer;
+    char* position = (char *)buffer;
     size_t next_entry_offset = 0;
 
     do {
@@ -1027,7 +1023,7 @@ void fs__scandir(uv_fs_t* req) {
                                    NULL,
                                    NULL,
                                    &iosb,
-                                   &buffer,
+                                   (char *)&buffer,
                                    sizeof buffer,
                                    FileDirectoryInformation,
                                    FALSE,
