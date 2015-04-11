@@ -687,7 +687,7 @@ int make_program_env(char* env_block[], WCHAR** dst_ptr) {
   size_t env_len = 0;
   int len;
   size_t i;
-  DWORD var_size;
+  int var_size;
   size_t env_block_count = 1; /* 1 for null-terminator */
   WCHAR* dst_copy;
   WCHAR** ptr_copy;
@@ -739,7 +739,7 @@ int make_program_env(char* env_block[], WCHAR** dst_ptr) {
     }
   }
   *ptr_copy = NULL;
-  assert(env_len == ptr - dst_copy);
+  assert(env_len == (size_t)(ptr - dst_copy));
 
   /* sort our (UTF-16) copy */
   qsort(env_copy, env_block_count-1, sizeof(wchar_t*), qsort_wcscmp);
@@ -815,7 +815,7 @@ int make_program_env(char* env_block[], WCHAR** dst_ptr) {
   }
 
   /* Terminate with an extra NULL. */
-  assert(env_len == (ptr - dst));
+  assert(env_len == (size_t)(ptr - dst));
   *ptr = L'\0';
 
   uv__free(dst_copy);

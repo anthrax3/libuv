@@ -923,7 +923,7 @@ void fs__scandir(uv_fs_t* req) {
   /* If the handle is not a directory, we'll get STATUS_INVALID_PARAMETER.
    * This should be reported back as UV_ENOTDIR.
    */
-  if (status == STATUS_INVALID_PARAMETER)
+  if (status == (NTSTATUS)STATUS_INVALID_PARAMETER)
     goto not_a_directory_error;
 
   while (NT_SUCCESS(status)) {
